@@ -1,1 +1,1 @@
-# gotrace
+# for go project study and learn
