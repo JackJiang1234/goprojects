@@ -1,4 +1,4 @@
-package main
+package trace
 
 import (
 	"bytes"
@@ -40,6 +40,7 @@ func Trace(name string) func() {
 }
 */
 
+/*
 func Trace() func() {
 	pc, _, _, ok := runtime.Caller(1)
 	if !ok {
@@ -54,6 +55,44 @@ func Trace() func() {
 	return func() { fmt.Printf("g[%05d]: exit: [%s]\n", gid, name) }
 }
 
+*/
+
+func printTrace(id uint64, name, arrow string, indent int){
+	indents := ""
+	for i := 0; i < indent; i++ {
+		indents += "	"
+	}
+	fmt.Printf("g[%05d]:%s%s%s\n", id, indents, arrow, name)
+}
+
+var mu sync.Mutex
+var m = make(map[uint64]int)
+
+func Trace() func() {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		panic("not found caller")
+	}
+
+	fn := runtime.FuncForPC(pc)
+	name := fn.Name()
+
+	gid := curGoroutineID()
+
+	mu.Lock()
+	indents := m[gid]
+	m[gid] = indents + 1
+	mu.Unlock()
+	printTrace(gid, name, "->", indents + 1)
+	return func() {
+		mu.Lock()
+		indents := m[gid]
+		m[gid] = indents - 1
+		mu.Unlock()
+		printTrace(gid, name, "<-", indents)
+	}
+}
+
 func foo() {
 	defer Trace()()
 	bar()
@@ -61,17 +100,4 @@ func foo() {
 
 func bar() {
 	defer Trace()()
-}
-
-func main() {
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	defer Trace()()
-	go func() {
-		foo()
-		wg.Done()
-	}()
-
-	wg.Wait()
 }
