@@ -1,13 +1,18 @@
 package main
 
-func foo(){
+import "github.com/JackJiang1234/goprojects/instrument_trace"
+
+func foo() {
+	defer trace.Trace()()
 	bar()
 }
 
-func bar(){
+func bar() {
+	defer trace.Trace()()
 
 }
 
-func main(){
+func main() {
+	defer trace.Trace()()
 	foo()
 }
