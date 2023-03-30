@@ -2,18 +2,20 @@ package factory
 
 import "fmt"
 
-type Person struct {
-	Name string
-	Age  int
+type Country interface {
+	Greet()
 }
 
-func (p Person) Greet() {
-	fmt.Printf("hi %s", p.Name)
+type country struct {
+	name string
 }
 
-func NewPerson(name string, age int) *Person {
-	return &Person{
-		Name: name,
-		Age: age,
+func (c country) Greet(){
+	fmt.Printf("hi %s", c.name)
+}
+
+func NewCountry(cname string) Country{
+	return &country{
+		name: cname,
 	}
 }
