@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "./;pb";
+
+service Greeter {
+    rpc SimpleRPC(HelloRequest) returns (HelloResponse);
+    rpc ServerSideStreamingRPC(HelloRequest) returns (stream HelloResponse);
+    rpc ClientSideStreamingRPC(stream HelloRequest) returns (HelloResponse);
+    rpc BidrectionalStreamingRPC(stream HelloRequest) returns (HelloResponse);
+}
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string reply = 2;
+}
