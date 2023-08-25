@@ -28,7 +28,7 @@ func (p *myFrameCodec) Encode(w io.Writer, payload FramePayLoad) error {
 
 	err := binary.Write(w, binary.BigEndian, &totalLen)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	n, err := w.Write([]byte(f))
