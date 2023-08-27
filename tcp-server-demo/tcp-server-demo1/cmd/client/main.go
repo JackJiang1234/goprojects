@@ -17,7 +17,7 @@ func main() {
 
 	wg.Add(num)
 	for i := 0; i < num; i++ {
-		go func(i int){
+		go func(i int) {
 			defer wg.Done()
 			startClient(i)
 		}(i + 1)
@@ -26,8 +26,8 @@ func main() {
 }
 
 func startClient(i int) {
-	quit := make(chan struct {})
-	done := make(chan struct {})
+	quit := make(chan struct{})
+	done := make(chan struct{})
 	conn, err := net.Dial("tcp", ":8888")
 	if err != nil {
 		fmt.Println("dial error:", err)
@@ -42,9 +42,9 @@ func startClient(i int) {
 	}
 
 	frameCodec := frame.NewMyFrameCodec()
-	var counter int 
+	var counter int
 
-	go func ()  {
+	go func() {
 		for {
 			select {
 			case <-quit:
@@ -65,6 +65,9 @@ func startClient(i int) {
 			}
 
 			p, err := packet.Decode(ackFramePayload)
+			if (err != nil){
+				fmt.Printf("[client %d] packet decode fail, %s", i, err)
+			}
 			submitAck, ok := p.(*packet.SubmitAck)
 			if !ok {
 				panic("not submitack")

@@ -58,8 +58,8 @@ type SubmitAck struct {
 }
 
 func (s *SubmitAck) Decode(pktBody []byte) error {
-	s.ID = string(pktBody[:8])
-	s.Result = pktBody[8]
+	s.ID = string(pktBody[0:8])
+	s.Result = uint8(pktBody[8])
 	return nil
 }
 

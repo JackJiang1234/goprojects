@@ -36,11 +36,13 @@ func handleConn(c net.Conn) {
 		framePayLoad, err := frameCodec.Decode(c)
 		if err != nil {
 			fmt.Println("handleConn: frame decode error:", err)
+			return
 		}
 
 		ackFramePayload, err := handlePacket(framePayLoad)
 		if err != nil {
 			fmt.Println("handleConn: handle packet error:", err)
+			return
 		}
 
 		err = frameCodec.Encode(c, ackFramePayload)
