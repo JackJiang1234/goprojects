@@ -1,9 +1,11 @@
 ﻿package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -26,5 +28,12 @@ func main() {
 		fmt.Printf("read content failed:%v\n", err)
 	}
 
-	fmt.Println("body:", string(body))
+	numLinks := strings.Count(string(body), "<a")
+	fmt.Printf("homepage has %d links\n", numLinks)
+
+	exits := strings.Contains(string(body), "疫情")
+	fmt.Printf("是否存疫情%v \n", exits)
+
+	bcount := bytes.Count(body, []byte("<a"))
+	fmt.Printf("homepage has %d links\n", bcount)
 }
