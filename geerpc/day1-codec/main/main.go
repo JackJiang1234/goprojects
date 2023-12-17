@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+// 协议名， 端口
+// 连接 
+
 func startServer(addr chan string) {
 	// pick a free port
 	l, err := net.Listen("tcp", ":0")
@@ -46,3 +49,6 @@ func main() {
 		log.Println("reply:", reply)
 	}
 }
+
+// server: 服务监听，获取连接，协议解释，获取请求，处理请求，发送响应
+// client: 发送请求，接受响应 

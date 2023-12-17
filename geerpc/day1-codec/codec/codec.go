@@ -14,7 +14,7 @@ type Codec interface {
 	io.Closer
 	ReadHeader(*Header) error
 	ReadBody(any) error
-	Write(*Header, any) error
+	      Write(*Header, any) error
 }
 
 type NewCodecFunc func (io.ReadWriteCloser) Codec 

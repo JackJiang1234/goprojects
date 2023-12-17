@@ -22,7 +22,7 @@ func NewGobCodec(conn io.ReadWriteCloser) Codec {
 		conn: conn,
 		buf:  buf,
 		dec:  gob.NewDecoder(conn),
-		enc:  gob.NewEncoder(buf),
+		enc:  gob.NewEncoder(conn),
 	}
 }
 
@@ -34,23 +34,22 @@ func (c *GobCodec) ReadBody(body any) error {
 	return c.dec.Decode(body)
 }
 
-func (c *GobCodec) Write(h *Header, body any) (err error){
+func (c *GobCodec) Write(h *Header, body any) (err error) {
 	defer func ()  {
 		_ = c.buf.Flush()
 		if err != nil {
-			_ = c.Close()
+			_ = c.conn.Close()
 		}
 	}()
-	if err = c.enc.Encode(h); err != nil {
-		log.Println("rpc: gob error encoding header: ", err)
-		return
+	if err := c.enc.Encode(h); err != nil {
+		log.Println("rpc codec: gob error encoding header:", err)
+		return err
 	}
-	
-	if err = c.enc.Encode(body); err != nil {
-		log.Println("rpc: gob error encoding body: ", err)
-		return
+	if err := c.enc.Encode(body); err != nil {
+		log.Println("rpc codec: gob error encoding body:", err)
+		return err
 	}
-	return
+	return nil
 }
 
 func (c *GobCodec) Close() error {
